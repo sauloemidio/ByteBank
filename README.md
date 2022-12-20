@@ -1,2 +1,2 @@
 # ByteBank
-Simulando operações básicas um sistema bancário em C#
+Sistema de terminal de uso continuo, simulando operações básicas um sistema bancário C#
