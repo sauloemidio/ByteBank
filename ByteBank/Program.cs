@@ -31,7 +31,6 @@ namespace ByteBank
                 {
                     case 0: Console.WriteLine("Encerrando o sistema...");
                         break;
-                    case 1: Console.WriteLine("Cadastrar usuário");
                 }
 
                 
