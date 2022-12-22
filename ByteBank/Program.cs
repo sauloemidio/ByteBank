@@ -66,28 +66,29 @@ namespace ByteBank
 
         static void ShowSubmenuManutencao(List<string> cpfs, List<string> titulares, List<string> senhas, List<string> nomesSociais, List<string> numerosContas, List<double> saldos)
         {
-            int opcao;
+            ConsoleKey opcao;
 
             do
             {
+                Clear();
                 MenuManutencao();
-                opcao = int.Parse(Console.ReadLine());
+                opcao = Console.ReadKey().Key;
                 ConsoleWriteLine("");
                 ConsoleWriteLine("");
 
                 switch (opcao)
                 {
-                    case 0:
+                    case ConsoleKey.Escape:
                         Clear();
                         break;
-                    case 1:
+                    case ConsoleKey.F1:
                         Clear();
                         Deposito(cpfs, titulares, senhas, nomesSociais, numerosContas, saldos);
                         break;
 
                 }
 
-                } while (opcao != 0);
+                } while (opcao != ConsoleKey.Escape);
 
         }
         static void Deposito(List<string> cpfs, List<string> titulares, List<string> senhas, List<string> nomesSociais, List<string> numerosContas, List<double> saldos)
@@ -244,40 +245,41 @@ namespace ByteBank
 
 
 
-            int opcao;
+            ConsoleKey tecla;
 
             do
             {
+                Clear();
                 MenuPrincipal();
-
-               opcao = int.Parse(Console.ReadLine());
+                
+                tecla = Console.ReadKey().Key;
                 ConsoleWriteLine("");
                 ConsoleWriteLine("");
 
-                switch (opcao)
+                switch (tecla)
                 {
-                    case 0:
+                    case ConsoleKey.Escape:
                         ConsoleWriteLine("Encerrando o sistema...");
                         break;
-                    case 1:
+                    case ConsoleKey.F1:
                         Clear();
                         AdicionarNovoUsuario(cpfs, titulares, senhas, nomesSociais, numerosContas, saldos);
                         break;
-                    case 2:
+                    case ConsoleKey.F2:
                         Clear();
                         DeletarUsuario(cpfs, titulares, senhas, nomesSociais, numerosContas, saldos);
                         
                         break;
-                    case 3:
+                    case ConsoleKey.F3:
                         Clear();
                         ListarClientesCadastrados(cpfs, titulares);
                         
                         break;
-                    case 4:
+                    case ConsoleKey.F4:
                         Clear();
                         DetalhesDoUsuario(cpfs, titulares, senhas, nomesSociais, numerosContas, saldos);
                         break;
-                    case 6:
+                    case ConsoleKey.F5:
                         Clear();
                         ShowSubmenuManutencao(cpfs, titulares, senhas, nomesSociais, numerosContas, saldos);
                         break;
@@ -285,7 +287,7 @@ namespace ByteBank
 
 
 
-                if (opcao != 0)
+                if (tecla != ConsoleKey.Escape)
                 {
                     
                     ConsoleWriteLine("");
@@ -294,7 +296,7 @@ namespace ByteBank
                 }
 
 
-            } while (opcao != 0);
+            } while (tecla != ConsoleKey.Escape);
 
 
         }
