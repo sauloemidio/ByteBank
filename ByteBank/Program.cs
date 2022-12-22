@@ -1,79 +1,171 @@
 ﻿using System;
+using System.Globalization;
+using System.Data;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using System.Collections.Generic;
+using System.Text;
+using static System.Console;
+using System.Runtime.Intrinsics.Arm;
+
 
 namespace ByteBank
 {
     public class ByteBank
     {
+        static void LimpaTela()
+        {
+            Titulos("PRESSIONE QUALQUER TECLA PARA CONTINUAR...");
+            ReadKey();
+            Clear();
+
+        }
+        static void ConsoleWriteLine(string msg)
+        {   
+            Console.WriteLine($"\t\t {msg}");
+        }
+        static void ConsoleWrite(string msg)
+        {
+            Console.Write($"\t\t {msg}");
+        }
+
+        static void Titulos(string titulo)
+        {
+            ConsoleWriteLine("");
+            Console.ForegroundColor = ConsoleColor.Green;
+            ConsoleWriteLine(titulo);
+            ConsoleWriteLine("");
+            Console.ResetColor();
+        }
         static void MenuPrincipal()
         {
-            Console.WriteLine("1 - Inserir novo Cliente");
-            Console.WriteLine("2 - Deletar um Cliente");
-            Console.WriteLine("3 - Listas Clientes Registrados");
-            Console.WriteLine("4 - Detalhes de um Cliente");
-            Console.WriteLine("5 - Saldo da conta");
-            Console.WriteLine("6 - Manutenção de contas");
-            Console.WriteLine("0 - Para sair do programa");
-            Console.Write("Digite a opção desejada: ");
+            Titulos("MENU PRINCIPAL");
+            ConsoleWriteLine("F1 - CAD. CLIENTE");
+            ConsoleWriteLine("F2 - DEL. CLIENTE");
+            ConsoleWriteLine("F3 - CLIENTES");
+            ConsoleWriteLine("F4 - INFO.CLIENTE");
+            ConsoleWriteLine("F5 - SALDO DA CONTA");
+            ConsoleWriteLine("F6 - ADM.CONTAS");
+            ConsoleWriteLine("0 - SAIR");
+            ConsoleWriteLine("");
+            ConsoleWrite("Digite a opção desejada: ");
+
+        }
+
+        static void MenuManutencao()
+        {
+            Titulos("MENU MANUTENCAO DE CONTA");
+            ConsoleWriteLine("F1 - DEPOSITO");
+            ConsoleWriteLine("F2 - SAQUE");
+            ConsoleWriteLine("F3 - TRANSFERENCIA");
+            ConsoleWriteLine("0 - VOLTAR AO MENU PRINCIPAL");
+            ConsoleWriteLine("");
+            ConsoleWrite("Digite a opção desejada: ");
         }
 
 
-        static void ShowSubmenuManutencao(List<string> cpfs, List<string> titulares, List<double> saldos)
+        static void ShowSubmenuManutencao(List<string> cpfs, List<string> titulares, List<string> senhas, List<string> nomesSociais, List<string> numerosContas, List<double> saldos)
         {
+            int opcao;
 
-            Console.Write("Digite o CPF: ");
-            string cpfDigitado = Console.ReadLine();
-            //Console.WriteLine(achou);
-            Console.WriteLine("2 = Transferencia");
+            do
+            {
+                MenuManutencao();
+                opcao = int.Parse(Console.ReadLine());
+                ConsoleWriteLine("");
+                ConsoleWriteLine("");
 
+                switch (opcao)
+                {
+                    case 0:
+                        Clear();
+                        break;
+                    case 1:
+                        Clear();
+                        Deposito(cpfs, titulares, senhas, nomesSociais, numerosContas, saldos);
+                        break;
+
+                }
+
+                } while (opcao != 0);
+
+        }
+        static void Deposito(List<string> cpfs, List<string> titulares, List<string> senhas, List<string> nomesSociais, List<string> numerosContas, List<double> saldos)
+        {
+            Titulos($"CPF PARA DEPOSITO");
+            int indiceDeposito = PesquisaIndice(cpfs, "Deposito");
+            if (indiceDeposito != -1)
+            {
+                Clear();
+                Titulos($"DEPOSITO NA CONTA {numerosContas[indiceDeposito]}");
+                ConsoleWriteLine($"Saldo: R$ {saldos[indiceDeposito].ToString("F2", CultureInfo.InvariantCulture)}");
+                ConsoleWrite("Digite o Valor: ");
+                double valorDeposito = Convert.ToDouble(Console.ReadLine(), CultureInfo.InvariantCulture);
+                saldos[indiceDeposito] += valorDeposito;
+                ConsoleWriteLine("");
+                ConsoleWriteLine($">> >Novo Saldo: R$ {saldos[indiceDeposito].ToString("F2", CultureInfo.InvariantCulture)}");
+                LimpaTela();
+            }
+            else
+            {
+                Clear();
+                ConsoleWriteLine("");
+                ConsoleWriteLine("CPF não encontrado!");
+                LimpaTela();
+            }
         }
 
         static void AdicionarNovoUsuario(List<string> cpfs, List<string> titulares, List<string> senhas, List<string> nomesSociais, List<string> numerosContas, List<double> saldos)
         {
-            Console.Write("Digite o CPF: ");
+            
+            Titulos("CADASTRO DE NOVO CLIENTE");
+            
+            ConsoleWrite("Digite o CPF: ");
             cpfs.Add(Console.ReadLine());
-            Console.Write("Digite o nome: ");
+            ConsoleWrite("Digite o nome: ");
             titulares.Add(Console.ReadLine());
-            Console.Write("Digite o nome Social: ");
+            ConsoleWrite("Digite o nome Social: ");
             nomesSociais.Add(Console.ReadLine());
-            Console.Write("Digite sua senha: ");
+            ConsoleWrite("Digite sua senha: ");
             senhas.Add(Console.ReadLine());
             numerosContas.Add("0");
-
             saldos.Add(0);
-
+            LimpaTela();
         }
 
         static void ListarClientesCadastrados(List<string> cpfs, List<string> titulares)
         {
-
-
-            for (int i = 0; i <= cpfs.Count; i++)
+            Titulos("LISTA DE CLIENTES CADASTRADOS");
+            if (cpfs.Count == 0)
             {
-                if (cpfs.Count == 0)
-                {
-                    Console.WriteLine("Não existe cliente cadastrado!");
-                }
-                else
-                {
-                    Console.WriteLine($"Nome: {titulares[i]} | CPF: {cpfs[i]}");
-                }
+                ConsoleWriteLine("Não existe cliente cadastrado!");
+                LimpaTela();
             }
+
+            for (int i = 0; i < cpfs.Count; i++)
+            {
+                    ConsoleWriteLine($"Nome: {titulares[i]} | CPF: {cpfs[i]}");
+                    
+            }
+            LimpaTela();
+
         }
 
 
         static void DetalhesDoUsuario(List<string> cpfs, List<string> titulares, List<string> senhas, List<string> nomesSociais, List<string> numerosContas, List<double> saldos)
         {
-            int indiceCPF = PesquisaIndice(cpfs);
+            Titulos("DETALHES CADASTRO DO CLIENTE");
+            int indiceCPF = PesquisaIndice(cpfs, "Detalhes");
 
             if (indiceCPF == -1)
             {
-                Console.WriteLine("CPF não encontrado!");
+                ConsoleWriteLine("CPF não encontrado!");
+                LimpaTela();
             }
             else if (numerosContas.Count == 0)
             {
-                Console.WriteLine($"Nome: {titulares[indiceCPF]} | CPF: {cpfs[indiceCPF]} | Nome Social: {nomesSociais[indiceCPF]} | Saldo: R${saldos[indiceCPF].ToString("F2")}");
+                ConsoleWriteLine($"Nome: {titulares[indiceCPF]} | CPF: {cpfs[indiceCPF]} | Nome Social: {nomesSociais[indiceCPF]} | Saldo: R$ {saldos[indiceCPF].ToString("F2")}");
+                LimpaTela();
             }
             else
             {
@@ -83,37 +175,43 @@ namespace ByteBank
 
         static void detalhesComConta(int i, List<string> cpfs, List<string> titulares, List<string> nomesSociais, List<string> numerosContas, List<double> saldos)
         {
-            Console.WriteLine($"Nome: {titulares[i]} | CPF: {cpfs[i]} | Nome Social: {nomesSociais[i]} | Numero Conta: {numerosContas[i]} | Saldo: R${saldos[i].ToString("F2")}");
+            ConsoleWriteLine($"Nome: {titulares[i]} | CPF: {cpfs[i]} | Nome Social: {nomesSociais[i]} | Numero Conta: {numerosContas[i]} | Saldo: R$ {saldos[i].ToString("F2")}");
+            LimpaTela();
         }
 
         static void DeletarUsuario(List<string> cpfs, List<string> titulares, List<string> senhas, List<string> nomesSociais, List<string> numerosContas, List<double> saldos)
         {
-            //Console.Write("Digite o CPF para deletar: ");
-            //string cpfParaDeletar = Console.ReadLine();
-            //int indiceParaDeletar = cpfs.FindIndex(cpf => cpf == cpfParaDeletar);
-
-            int indiceParaDeletar = PesquisaIndice(cpfs);
+            Titulos("DELETAR CLIENTE");
+            int indiceParaDeletar = PesquisaIndice(cpfs, "Deletar");
 
             if (indiceParaDeletar == -1)
             {
-                Console.WriteLine("CPF não encontrado!");
+                ConsoleWriteLine("CPF não encontrado!");
+                LimpaTela();
+            }
+            else
+            {
+                string nomeDeletado = titulares[indiceParaDeletar];
+                cpfs.RemoveAt(indiceParaDeletar);
+                titulares.RemoveAt(indiceParaDeletar);
+                senhas.RemoveAt(indiceParaDeletar);
+                nomesSociais.RemoveAt(indiceParaDeletar);
+                numerosContas.RemoveAt(indiceParaDeletar);
+                saldos.RemoveAt(indiceParaDeletar);
+                ConsoleWriteLine("");
+                ConsoleWriteLine($"Cliente {nomeDeletado} deletado com sucesso!");
+                LimpaTela();
             }
 
-            cpfs.RemoveAt(indiceParaDeletar);
-            titulares.RemoveAt(indiceParaDeletar);
-            senhas.RemoveAt(indiceParaDeletar);
-            nomesSociais.RemoveAt(indiceParaDeletar);
-            numerosContas.RemoveAt(indiceParaDeletar);
-            saldos.RemoveAt(indiceParaDeletar);
-
-            Console.WriteLine("Usuario deletado com sucesso!");
+            
         }
 
-        static int PesquisaIndice(List<string> cpfs)
+        static int PesquisaIndice(List<string> cpfs, string motivo)
         {
-            Console.Write("Digite o CPF: ");
-            //string cpfParaListar = Console.ReadLine();
-            return cpfs.FindIndex(cpf => cpf == Console.ReadLine());
+            ConsoleWriteLine($"{motivo}");
+            ConsoleWrite("Digite o CPF: ");
+            string cpfParaListar = Console.ReadLine();
+            return cpfs.FindIndex(cpf => cpf == cpfParaListar);
         }
 
         static double Soma(List<double> saldos)
@@ -124,11 +222,15 @@ namespace ByteBank
 
         public static void Main(string[] args)
         {
-
+            
             Console.Title = "Byte Bank";
 
-            // Console.WriteLine("Digite a quantidade de usuários");
+            // ConsoleWriteLine("Digite a quantidade de usuários");
             // int quantidaDeUsuarios = int.Parse(Console.ReadLine());
+
+            //Console.BackgroundColor = ConsoleColor.Gray;
+            //Console.ForegroundColor = ConsoleColor.Black;
+            //Console.Clear();
 
             // listas ref. clientes
             List<string> cpfs = new List<string>();
@@ -142,47 +244,57 @@ namespace ByteBank
 
 
 
-            int option;
+            int opcao;
 
             do
             {
                 MenuPrincipal();
-                option = int.Parse(Console.ReadLine());
 
+               opcao = int.Parse(Console.ReadLine());
+                ConsoleWriteLine("");
+                ConsoleWriteLine("");
 
-                switch (option)
+                switch (opcao)
                 {
                     case 0:
-                        Console.WriteLine("Encerrando o sistema...");
+                        ConsoleWriteLine("Encerrando o sistema...");
                         break;
                     case 1:
+                        Clear();
                         AdicionarNovoUsuario(cpfs, titulares, senhas, nomesSociais, numerosContas, saldos);
                         break;
                     case 2:
+                        Clear();
                         DeletarUsuario(cpfs, titulares, senhas, nomesSociais, numerosContas, saldos);
+                        
                         break;
                     case 3:
+                        Clear();
                         ListarClientesCadastrados(cpfs, titulares);
+                        
                         break;
                     case 4:
+                        Clear();
                         DetalhesDoUsuario(cpfs, titulares, senhas, nomesSociais, numerosContas, saldos);
                         break;
                     case 6:
-                        ShowSubmenuManutencao(cpfs, titulares, saldos);
+                        Clear();
+                        ShowSubmenuManutencao(cpfs, titulares, senhas, nomesSociais, numerosContas, saldos);
                         break;
                 }
 
 
 
-                if (option != 0)
+                if (opcao != 0)
                 {
-                    Console.WriteLine();
-                    Console.WriteLine("--------");
-                    Console.WriteLine();
+                    
+                    ConsoleWriteLine("");
+                    ConsoleWriteLine("--------");
+                    ConsoleWriteLine("");
                 }
 
 
-            } while (option != 0);
+            } while (opcao != 0);
 
 
         }
