@@ -6,15 +6,43 @@ namespace ByteBank
 {
     public class ByteBank
     {
+        static void SairSistema(List<string> cpfs, List<string> titulares, List<string> senhas, List<string> nomesSociais, List<string> numerosContas, List<double> saldos)
+        {
+            ConsoleKey tecla;
+
+            do
+            {
+
+                
+                tecla = Console.ReadKey().Key;
+                ConsoleWriteLine("");
+                ConsoleWriteLine("");
+
+                switch (tecla)
+                {
+                    case ConsoleKey.Escape:
+                        Environment.Exit(1);
+                        break;
+                    case ConsoleKey.Enter:
+                        ShowMenuLogin(cpfs, titulares, senhas, nomesSociais, numerosContas, saldos);
+                        break;
+                }
+
+            } while (tecla != ConsoleKey.Escape);
+
+
+        }
         static void LimpaTela()
         {
             TitulosTelas("PRESSIONE QUALQUER TECLA PARA CONTINUAR...");
             ReadKey();
             Clear();
 
+
+
         }
         static void ConsoleWriteLine(string msg)
-        {   
+        {
             Console.WriteLine($"\t\t {msg}");
         }
         static void ConsoleWrite(string msg)
@@ -39,12 +67,105 @@ namespace ByteBank
             ConsoleWriteLine("F4 - INFO.CLIENTE");
             ConsoleWriteLine("F5 - SALDO DA CONTA");
             ConsoleWriteLine("F6 - ADM.CONTAS");
-            ConsoleWriteLine("ESC - SAIR");
+            ConsoleWriteLine("ESC - SAIR - LOGOUT");
             ConsoleWriteLine("");
             ConsoleWrite("Digite a opção desejada: ");
 
         }
+        static void ShowMenuPrincipal(List<string> cpfs, List<string> titulares, List<string> senhas, List<string> nomesSociais, List<string> numerosContas, List<double> saldos)
+        {
+            ConsoleKey tecla;
 
+            do
+            {
+                Clear();
+                MenuPrincipal();
+
+                tecla = Console.ReadKey().Key;
+                ConsoleWriteLine("");
+                ConsoleWriteLine("");
+
+                switch (tecla)
+                {
+                    case ConsoleKey.Escape:
+                        TitulosTelas("> VOCE FEZ LOGOUT -  PRESSIONE (ENTER) PARA CONTINUAR OU (ESC) PARA SAIR");
+                        SairSistema(cpfs, titulares, senhas, nomesSociais, numerosContas, saldos);
+                        Clear();
+                        ShowMenuLogin(cpfs, titulares, senhas, nomesSociais, numerosContas, saldos);
+                        break;
+                    case ConsoleKey.F1:
+                        Clear();
+                        AdicionarNovoCliente(cpfs, titulares, senhas, nomesSociais, numerosContas, saldos);
+                        break;
+                    case ConsoleKey.F2:
+                        Clear();
+                        DeletarCliente(cpfs, titulares, senhas, nomesSociais, numerosContas, saldos);
+                        break;
+                    case ConsoleKey.F3:
+                        Clear();
+                        ListarClientesCadastrados(cpfs, titulares);
+                        break;
+                    case ConsoleKey.F4:
+                        Clear();
+                        DetalhesDoUsuario(cpfs, titulares, senhas, nomesSociais, numerosContas, saldos);
+                        break;
+                    case ConsoleKey.F5:
+                        Saldo(cpfs, titulares, saldos);
+                        Clear();
+                        break;
+                    case ConsoleKey.F6:
+                        Clear();
+                        ShowSubmenuManutencao(cpfs, titulares, senhas, nomesSociais, numerosContas, saldos);
+                        break;
+                }
+
+
+
+                if (tecla != ConsoleKey.Escape)
+                {
+
+                    ConsoleWriteLine("");
+                    ConsoleWriteLine("--------");
+                    ConsoleWriteLine("");
+                }
+
+
+            } while (tecla != ConsoleKey.Escape);
+
+        }
+
+        static void ShowMenuLogin(List<string> cpfs, List<string> titulares, List<string> senhas, List<string> nomesSociais, List<string> numerosContas, List<double> saldos)
+        {
+            
+            Clear();
+            TitulosTelas(" ...LOGIN... ");
+            string user = "admin";
+            string password = "admin";
+            string userDigitado;
+            string passDigitado;
+
+
+            ConsoleWrite("Digite o usuário: ");
+            userDigitado = Console.ReadLine();
+            ConsoleWrite("Digite a senha: ");
+            passDigitado = Console.ReadLine();
+            
+            if (userDigitado == user && passDigitado == password)
+            {
+                ShowMenuPrincipal(cpfs, titulares, senhas, nomesSociais, numerosContas, saldos);
+            }
+            else if (userDigitado != user || passDigitado != password || userDigitado.Length < 0 || passDigitado.Length < 0)
+            {
+                TitulosTelas("PRESSIONE (ENTER) PARA CONTINUAR OU (ESC) PARA SAIR");
+                SairSistema(cpfs, titulares, senhas, nomesSociais, numerosContas, saldos);
+                Clear();
+                ShowMenuLogin(cpfs, titulares, senhas, nomesSociais, numerosContas, saldos);
+            }
+
+            
+                    
+
+        }
         static void MenuManutencao()
         {
             TitulosTelas("MENU MANUTENCAO DE CONTA");
@@ -55,7 +176,6 @@ namespace ByteBank
             ConsoleWriteLine("");
             ConsoleWrite("Digite a opção desejada: ");
         }
-
 
         static void ShowSubmenuManutencao(List<string> cpfs, List<string> titulares, List<string> senhas, List<string> nomesSociais, List<string> numerosContas, List<double> saldos)
         {
@@ -214,12 +334,10 @@ namespace ByteBank
               
             }
             
-
-        
-        static void AdicionarNovoUsuario(List<string> cpfs, List<string> titulares, List<string> senhas, List<string> nomesSociais, List<string> numerosContas, List<double> saldos)
+        static void AdicionarNovoCliente(List<string> cpfs, List<string> titulares, List<string> senhas, List<string> nomesSociais, List<string> numerosContas, List<double> saldos)
         {
             
-            TitulosTelas("CADASTRO DE NOVO CLIENTE");
+            TitulosTelas("CADASTRO DE CLIENTE");
             
             ConsoleWrite("Digite o CPF: ");
             cpfs.Add(Console.ReadLine());
@@ -255,8 +373,8 @@ namespace ByteBank
 
         static void Saldo(List<string> cpfs, List<string> numerosContas, List<double> saldos)
         {
-            TitulosTelas($"CPF PARA Saldo");
-            int indiceSaldo = PesquisaIndice(cpfs, "Saldo");
+            TitulosTelas($"CPF PARA SALDO");
+            int indiceSaldo = PesquisaIndice(cpfs, "SALDO");
             if (indiceSaldo != -1)
             {
                 Clear();
@@ -342,13 +460,7 @@ namespace ByteBank
             
             Console.Title = "Byte Bank";
 
-            // ConsoleWriteLine("Digite a quantidade de usuários");
-            // int quantidaDeUsuarios = int.Parse(Console.ReadLine());
-
-            //Console.BackgroundColor = ConsoleColor.Gray;
-            //Console.ForegroundColor = ConsoleColor.Black;
-            //Console.Clear();
-
+            
             // listas ref. clientes
             List<string> cpfs = new List<string>();
             List<string> titulares = new List<string>();
@@ -361,60 +473,11 @@ namespace ByteBank
 
 
 
-            ConsoleKey tecla;
-
-            do
-            {
-                Clear();
-                MenuPrincipal();
-                
-                tecla = Console.ReadKey().Key;
-                ConsoleWriteLine("");
-                ConsoleWriteLine("");
-
-                switch (tecla)
-                {
-                    case ConsoleKey.Escape:
-                        ConsoleWriteLine("Encerrando o sistema...");
-                        break;
-                    case ConsoleKey.F1:
-                        Clear();
-                        AdicionarNovoUsuario(cpfs, titulares, senhas, nomesSociais, numerosContas, saldos);
-                        break;
-                    case ConsoleKey.F2:
-                        Clear();
-                        DeletarCliente(cpfs, titulares, senhas, nomesSociais, numerosContas, saldos);
-                        break;
-                    case ConsoleKey.F3:
-                        Clear();
-                        ListarClientesCadastrados(cpfs, titulares);
-                        break;
-                    case ConsoleKey.F4:
-                        Clear();
-                        DetalhesDoUsuario(cpfs, titulares, senhas, nomesSociais, numerosContas, saldos);
-                        break;
-                    case ConsoleKey.F5:
-                        Saldo(cpfs, titulares, saldos);
-                        Clear();
-                        break;
-                    case ConsoleKey.F6:
-                        Clear();
-                        ShowSubmenuManutencao(cpfs, titulares, senhas, nomesSociais, numerosContas, saldos);
-                        break;
-                }
-
-
-
-                if (tecla != ConsoleKey.Escape)
-                {
-                    
-                    ConsoleWriteLine("");
-                    ConsoleWriteLine("--------");
-                    ConsoleWriteLine("");
-                }
-
-
-            } while (tecla != ConsoleKey.Escape);
+            TitulosTelas("___BEM VINDO AO BYTE BANK___ - "+
+                "\n "+
+                "\n\t\t    (ENTER) = CONTINAR" +
+                "\n\t\t    (ESC)   = PARA SAIR ");
+            SairSistema(cpfs, titulares, senhas, nomesSociais, numerosContas, saldos);
 
 
         }
