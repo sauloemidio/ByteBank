@@ -473,9 +473,10 @@ namespace ByteBank
 
 
 
-            TitulosTelas("___BEM VINDO AO BYTE BANK___ - "+
+            TitulosTelas("___BEM VINDO AO BYTE BANK___"+
                 "\n "+
-                "\n\t\t    (ENTER) = CONTINAR" +
+                "\n\t\t       PRESSIONE    " +
+                "\n\t\t    (ENTER) = LOGAR" +
                 "\n\t\t    (ESC)   = PARA SAIR ");
             SairSistema(cpfs, titulares, senhas, nomesSociais, numerosContas, saldos);
 
